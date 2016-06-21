@@ -63,7 +63,7 @@ function Rapper(userName, firstNames, lastNames) {
   options[2] = [firstName, newUserName, lastName].join(' ');
 
   this.name = function() {
-    return options[_randomIndex(options.length)]
+    return options[_randomIndex(options.length)];
   }
 }
 
