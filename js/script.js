@@ -16,58 +16,91 @@ function Generator() {
 
   /* Name Arrays: Customize names to change possible output */
   this.last_names = ['the Chef', 'Digital', 'Wise', 'Knight', 'Wrecka', 'the Genius', 'the Zoo Keeper', 'the Monk', 'the Scientist', 'the Disciple', 'the Darkman', 'Pellegrino', 'the Ill Figure', 'Rocks The World', 'the Baptist',];
-  this.first_names = ['Inspectah', 'Masta', 'Poppa', 'Five Foot', 'Ghostface', 'Old Dirty'];
+  this.first_names = ['Inspectah', 'Masta', 'Poppa', 'Five Foot', 'Ghostface', 'Old Dirty', 'Chief'];
 
 }
 
-function randomIndex(arrayLength) {
-  return Math.floor((Math.random() * arrayLength));
+function User(userName) {
+  var length = userName.length;
+  
+  this.valid = function() {
+    if(length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  this.name = userName;
 }
 
-function firstLetter(name) {
-  return name[0].toUpperCase();
-}
+function Rapper(userName, firstNames, lastNames) {
+  
+  function _randomIndex(arrayLength) {
+    return Math.floor((Math.random() * arrayLength));
+  }
 
-function capsAndDots(name) {
-  return name.toUpperCase().split('').join('.');
-}
+  function _firstLetter() {
+    return userName[0].toUpperCase();
+  }
 
-function changedUserName(name) {
-  var userNameArray = [name, firstLetter(name), capsAndDots(name)];
-  return userNameArray[randomIndex(userNameArray.length)];
-}
+  function _capsAndDots() {
+    return userName.toUpperCase().split('').join('.');
+  }
 
-function rapName(userName, firstName, lastName) {
+  function _changedUserName() {
+    var userNameArray = [userName, _firstLetter(), _capsAndDots()];
+    return userNameArray[_randomIndex(userNameArray.length)];
+  }
+
   var options = [];
-  var newUserName = changedUserName(userName);
+  var newUserName = _changedUserName(userName);
+  var firstName = firstNames[_randomIndex(firstNames.length)];
+  var lastName = lastNames[_randomIndex(lastNames.length)];
+  
   options[0] = [newUserName, lastName].join(' ');
   options[1] = [firstName, newUserName].join(' ');
   options[2] = [firstName, newUserName, lastName].join(' ');
-  return options[randomIndex(options.length)]
+
+  this.name = function() {
+    return options[_randomIndex(options.length)]
+  }
 }
 
+var engine = new Generator;  
+var firstNames = engine.first_names;
+var lastNames = engine.last_names;
 
 $(document).ready(function() {
-  var engine = new Generator;
+  var error = $('.error');
+  var response = $('.response');
   var button = $('#enter');
+  var userInput = $('#user-input');
+  var success = $('.alert-success.response');
+
+  function showResult() {
+    error.hide();
+    response.show();
+  }
+
+  function showError() {
+    response.hide();
+    error.show();
+  }
   
   button.on('click', function() {
-    var firstName = engine.first_names[randomIndex(engine.first_names.length)];
-    var lastName = engine.last_names[randomIndex(engine.last_names.length)];
-    var userName = $('#user-input').val();
     
-    if(userName.length > 0) {
-      
-      $('.error').hide();
-      $('.response').show();
-      
-      var displayName = rapName(userName, firstName, lastName);
-      $('.alert-success.response').text(displayName);
+    var user = new User(userInput.val());
     
+    if(user.valid()) {
+
+      var rapper = new Rapper(user.name, firstNames, lastNames);
+      success.text(rapper.name());
+      showResult();
+
     } else {
 
-      $('.response').hide();
-      $('.error').show();
+      showError();
 
     }
   });
